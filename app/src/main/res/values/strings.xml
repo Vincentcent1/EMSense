@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ITEMS</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="content_main_button_detect">DETECT</string>
+    <string name="content_main_textView_recents">RECENTS AT A GLANCE:</string>
+
+    <string name="nav_header_main_textView_name">Emma Watson</string>
+    <string name="nav_header_main_textView_email">emmawatson@gmail.com</string>
+
+
+</resources>
