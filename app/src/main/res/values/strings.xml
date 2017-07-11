@@ -9,8 +9,25 @@
     <string name="content_main_button_detect">DETECT</string>
     <string name="content_main_textView_recents">RECENTS AT A GLANCE:</string>
 
-    <string name="nav_header_main_textView_name">Emma Watson</string>
-    <string name="nav_header_main_textView_email">emmawatson@gmail.com</string>
+
+    <string name="nav_header_main_textView_name">Android</string>
+    <string name="nav_header_main_textView_email">Android@gmail.com</string>
+
+    <string name="profile_name">Nexus Android</string>
+    <string name="profile_description">Engineering robot currently studying at Google Academy, United States.</string>
+    <string name="profile_history">HISTORY</string>
+    <string name="profile_item1">ABC Laser Cutter</string>
+    <string name="profile_item2">DEF 3D Printer</string>
+    <string name="profile_item3">GHI Laser Cutter</string>
+    <string name="profile_timestamp">Last touched: 08:48, 09/07/2017</string>
+
+    <string name="settings_language">Language</string>
+    <string name="settings_language_english">English(US)</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_theme">Dark theme</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_feedback">Help &amp; Feedback</string>
 
 
 </resources>

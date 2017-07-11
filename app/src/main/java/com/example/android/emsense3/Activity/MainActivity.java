@@ -2,6 +2,8 @@
 
 package com.example.android.emsense3.Activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,10 +11,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.emsense3.Fragments.HomeFragment;
+import com.example.android.emsense3.Fragments.ProfileFragment;
+import com.example.android.emsense3.Fragments.SettingsFragment;
 import com.example.android.emsense3.R;
+
 
 
 //https://stackoverflow.com/questions/38011736/android-circle-profile-picture
@@ -20,6 +27,8 @@ import com.example.android.emsense3.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fragment_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -39,14 +48,44 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragment_container1) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                Log.v(TAG, "I'm at 56");
+                return;
+
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            HomeFragment firstFragment = new HomeFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            firstFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container1, firstFragment, firstFragment.getTag()).commit();
+            Log.v(TAG, "I'm at 71");
+        }
+
+
     }
 
     //    Modify back button to close nav drawer
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fragment_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();
         }
@@ -78,23 +117,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        // Create new fragment and transaction
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            // Handle the camera action
+            Fragment newFragment = new HomeFragment();
+            transaction.replace(R.id.fragment_container1, newFragment, newFragment.getTag());
+            transaction.addToBackStack(null);
+            transaction.commit();
+
         } else if (id == R.id.nav_profile) {
+            Fragment newFragment = new ProfileFragment();
+            transaction.replace(R.id.fragment_container1, newFragment, newFragment.getTag());
+            transaction.addToBackStack(null);
+            transaction.commit();
+
 
         } else if (id == R.id.nav_library) {
 
         } else if (id == R.id.nav_settings) {
+            Fragment newFragment = new SettingsFragment();
+            transaction.replace(R.id.fragment_container1, newFragment, newFragment.getTag());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        } else if (id == R.id.nav_about_us) {
 
-        } else if (id == R.id.nav_credits) {
-
-        } else if (id == R.id.nav_quit) {
+        } else if (id == R.id.nav_privacy_policy) {
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fragment_container);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
