@@ -4,6 +4,7 @@ package com.example.android.emsense3.Activity;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +20,6 @@ import com.example.android.emsense3.Fragments.HomeFragment;
 import com.example.android.emsense3.Fragments.ProfileFragment;
 import com.example.android.emsense3.Fragments.SettingsFragment;
 import com.example.android.emsense3.R;
-
 
 
 //https://stackoverflow.com/questions/38011736/android-circle-profile-picture
@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_library) {
+            Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+            startActivity(i);
 
         } else if (id == R.id.nav_settings) {
             Fragment newFragment = new SettingsFragment();

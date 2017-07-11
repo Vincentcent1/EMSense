@@ -9,4 +9,6 @@
     <color name="White">#FFFFFF</color>
     <color name="Black">#000000</color>
     <color name="Transparent">#00FFFFFF</color>
+    <color name="album_title">#4c4c4c</color>
+    <color name="viewBg">#f1f5f8</color>
 </resources>
