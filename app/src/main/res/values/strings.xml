@@ -13,8 +13,8 @@
     <string name="nav_header_main_textView_name">Android</string>
     <string name="nav_header_main_textView_email">Android@gmail.com</string>
 
-    <string name="profile_name">Nexus Android</string>
-    <string name="profile_description">Engineering robot currently studying at Google Academy, United States.</string>
+    <string name="profile_name">Android</string>
+    <string name="profile_description">Mechanical Engineering Undergraduate, Zhejiang University</string>
     <string name="profile_history">HISTORY</string>
     <string name="profile_item1">ABC Laser Cutter</string>
     <string name="profile_item2">DEF 3D Printer</string>
