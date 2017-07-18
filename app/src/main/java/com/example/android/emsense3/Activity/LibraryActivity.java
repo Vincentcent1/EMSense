@@ -5,6 +5,8 @@ package com.example.android.emsense3.Activity;
  */
 
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -20,15 +22,21 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.emsense3.R;
+import com.example.android.emsense3.data.ItemsContract.LibraryEntry;
+import com.example.android.emsense3.data.ItemsDbHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LibraryActivity extends AppCompatActivity {
 
+    private static final String TAG = "LibraryActivity";
     private RecyclerView recyclerView;
     private AlbumAdapter adapter;
     private List<Album> albumList;
+    private List<String> objectList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +46,77 @@ public class LibraryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         initCollapsingToolbar();
+
+        //Database Stuff
+        ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+        // Gets the data repository in write mode
+//        SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+//        ContentValues values = new ContentValues();
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1A");
+//        values.put(LibraryEntry.COLUMN_MODEL, "A");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1B");
+//        values.put(LibraryEntry.COLUMN_MODEL, "B");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+//
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1C");
+//        values.put(LibraryEntry.COLUMN_MODEL, "C");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+//
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "2A");
+//        values.put(LibraryEntry.COLUMN_MODEL, "A");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "Drill");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+//
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "2B");
+//        values.put(LibraryEntry.COLUMN_MODEL, "B");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "Drill");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+//
+//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "3A");
+//        values.put(LibraryEntry.COLUMN_MODEL, "A");
+//        values.put(LibraryEntry.COLUMN_ITEMS, "Laser Cutter");
+//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
+
+        // Insert the new row, returning the primary key value of the new row
+//        long newRowId = dbWrite.insert(LibraryEntry.TABLE_NAME, null, values);
+
+
+        SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
+
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                LibraryEntry._ID,
+                LibraryEntry.COLUMN_ITEMS,
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LibraryEntry.COLUMN_ITEMS;
+//        String[] selectionArgs = { "" };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                LibraryEntry.COLUMN_ITEMS + " ASC";
+
+        Cursor cursor = dbRead.query(
+                LibraryEntry.TABLE_NAME,                     // The table to query
+                projection,                               // The columns to return
+                null,                                // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -50,7 +129,8 @@ public class LibraryActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        prepareAlbums();
+
+        prepareAlbums(cursor);
 
         try {
             Glide.with(this).load(R.drawable.library_banner).into((ImageView) findViewById(R.id.backdrop));
@@ -96,49 +176,104 @@ public class LibraryActivity extends AppCompatActivity {
     /**
      * Adding few albums for testing
      */
-    private void prepareAlbums() {
-        int[] covers = new int[]{
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object,
-                R.drawable.dummy_object};
+    private void prepareAlbums(Cursor cursor) {
+        int nameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
+        Album a;
 
-        Album a = new Album("3D Printer", 13, covers[0]);
+        Map covers = new HashMap();
+//        add image accordingly here
+        covers.put("3D Printer", R.drawable.dummy_object);
+        covers.put("Drill", R.drawable.drop_down_bg);
+        covers.put("Laser Cutter", R.drawable.ic_audio_black_24dp);
+
+
+//        int[] covers = new int[]{
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object,
+//            R.drawable.dummy_object};
+
+        cursor.moveToNext();
+        String name = cursor.getString(nameColumnIndex);
+        int counter = 0;
+        int i = 0;
+        while (i < cursor.getCount()) {
+
+            if (!name.equals(cursor.getString(nameColumnIndex))) {
+                a = new Album(name, counter, (int) covers.get(name));
+                albumList.add(a);
+                name = cursor.getString(nameColumnIndex);
+                counter = 1;
+            } else {
+                counter++;
+
+            }
+
+            cursor.moveToNext();
+            i++;
+        }
+        a = new Album(name.toString(), counter, (int) covers.get(name));
         albumList.add(a);
 
-        a = new Album("Laser Cutter", 8, covers[1]);
-        albumList.add(a);
 
-        a = new Album("Smart Fridge", 11, covers[2]);
-        albumList.add(a);
+//        Set<String> objectSet = new LinkedHashSet<String>();
+//        for (int i = 0; i < cursor.getCount();i++){
+//            cursor.moveToNext();
+//            int nameColumnIndex =
+//                    cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
+//            String name = cursor.getString(nameColumnIndex);
+//            objectSet.add(name);
+//            String done = "done" + i;
+//            Log.v(TAG,done);
+//        }
+//        cursor.close();
+//        Log.v(TAG,objectSet.toString());
 
-        a = new Album("Soldering Iron", 12, covers[3]);
-        albumList.add(a);
+//        Album a;
+//        Iterator iterator = objectSet.iterator();
+//        while (iterator.hasNext()){
+//            Object name = iterator.next();
+//            a = new Album(name.toString(), 1, covers[0]);
+//            albumList.add(a);
+//        }
 
-        a = new Album("Hand Drill", 14, covers[4]);
-        albumList.add(a);
 
-        a = new Album("Calculator", 1, covers[5]);
-        albumList.add(a);
-
-        a = new Album("Arduino Uno", 11, covers[6]);
-        albumList.add(a);
-
-        a = new Album("Arduino Trio", 14, covers[7]);
-        albumList.add(a);
-
-        a = new Album("Arduino Nano", 11, covers[8]);
-        albumList.add(a);
-
-        a = new Album("Arduino Duo", 17, covers[9]);
-        albumList.add(a);
+//        Album a = new Album("3D Printer", 13, covers[0]);
+//        albumList.add(a);
+//
+//        a = new Album("Laser Cutter", 8, covers[1]);
+//        albumList.add(a);
+//
+//        a = new Album("Smart Fridge", 11, covers[2]);
+//        albumList.add(a);
+//
+//        a = new Album("Soldering Iron", 12, covers[3]);
+//        albumList.add(a);
+//
+//        a = new Album("Hand Drill", 14, covers[4]);
+//        albumList.add(a);
+//
+//        a = new Album("Calculator", 1, covers[5]);
+//        albumList.add(a);
+//
+//        a = new Album("Arduino Uno", 11, covers[6]);
+//        albumList.add(a);
+//
+//        a = new Album("Arduino Trio", 14, covers[7]);
+//        albumList.add(a);
+//
+//        a = new Album("Arduino Nano", 11, covers[8]);
+//        albumList.add(a);
+//
+//        a = new Album("Arduino Duo", 17, covers[9]);
+//        albumList.add(a);
 
         adapter.notifyDataSetChanged();
     }

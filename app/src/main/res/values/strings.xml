@@ -34,6 +34,7 @@
     <string name="backdrop_title">ITEMS</string>
     <string name="backdrop_subtitle">Your saved objects:</string>
     <string name="activity_library">Library</string>
+    <string name="title_activity_objects">ObjectsActivity</string>
 
 
 </resources>

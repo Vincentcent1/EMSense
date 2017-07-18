@@ -24,8 +24,14 @@
             android:label="Library"
             android:parentActivityName=".Activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
+        <activity
+            android:name=".Activity.ObjectsActivity"
+            android:label="@string/title_activity_objects"
+            android:parentActivityName=".Activity.LibraryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.emsense3.Activity.LibraryActivity" />
+        </activity>
     </application>
 
 </manifest>
