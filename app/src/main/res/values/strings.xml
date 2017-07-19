@@ -29,7 +29,7 @@
     <string name="settings_account">Account</string>
     <string name="settings_feedback">Help &amp; Feedback</string>
 
-    <string name="action_add_favourite">Add to Favorites</string>
+    <string name="action_delete">Delete</string>
     <string name="action_play_next">Save as PDF</string>
     <string name="backdrop_title">ITEMS</string>
     <string name="backdrop_subtitle">Your saved objects:</string>

@@ -11,12 +11,16 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -30,13 +34,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LibraryActivity extends AppCompatActivity {
+public class LibraryActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private static final String TAG = "LibraryActivity";
+    ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
     private RecyclerView recyclerView;
-    private AlbumAdapter adapter;
+    private AlbumAdapterLibrary adapter;
     private List<Album> albumList;
-    private List<String> objectList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,44 +52,12 @@ public class LibraryActivity extends AppCompatActivity {
         initCollapsingToolbar();
 
         //Database Stuff
-        ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+
         // Gets the data repository in write mode
 //        SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
-//        ContentValues values = new ContentValues();
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1A");
-//        values.put(LibraryEntry.COLUMN_MODEL, "A");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
 
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1B");
-//        values.put(LibraryEntry.COLUMN_MODEL, "B");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
-//
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "1C");
-//        values.put(LibraryEntry.COLUMN_MODEL, "C");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "3D Printer");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
-//
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "2A");
-//        values.put(LibraryEntry.COLUMN_MODEL, "A");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "Drill");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
-//
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "2B");
-//        values.put(LibraryEntry.COLUMN_MODEL, "B");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "Drill");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
-//
-//        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, "3A");
-//        values.put(LibraryEntry.COLUMN_MODEL, "A");
-//        values.put(LibraryEntry.COLUMN_ITEMS, "Laser Cutter");
-//        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, "Specifications stuff here");
 
-        // Insert the new row, returning the primary key value of the new row
-//        long newRowId = dbWrite.insert(LibraryEntry.TABLE_NAME, null, values);
 
 
         SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
@@ -94,7 +66,7 @@ public class LibraryActivity extends AppCompatActivity {
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
-                LibraryEntry._ID,
+//                LibraryEntry._ID,
                 LibraryEntry.COLUMN_ITEMS,
         };
 
@@ -107,28 +79,26 @@ public class LibraryActivity extends AppCompatActivity {
                 LibraryEntry.COLUMN_ITEMS + " ASC";
 
         Cursor cursor = dbRead.query(
-                LibraryEntry.TABLE_NAME,                     // The table to query
+                LibraryEntry.TABLE_NAME,                  // The table to query
                 projection,                               // The columns to return
-                null,                                // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
+                null,                                     // The columns for the WHERE clause
+                null,                                     // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 sortOrder                                 // The sort order
         );
 
 
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         albumList = new ArrayList<>();
-        adapter = new AlbumAdapter(this, albumList);
+        adapter = new AlbumAdapterLibrary(this, albumList);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
 
         prepareAlbums(cursor);
 
@@ -139,6 +109,42 @@ public class LibraryActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbHelper.close();
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_items, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(this);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        newText = newText.toLowerCase();
+        ArrayList<Album> newList = new ArrayList<>();
+        for (Album album : albumList) {
+            String name = album.getName().toLowerCase();
+            if (name.contains(newText))
+                newList.add(album);
+        }
+
+        adapter.setFilter(newList);
+        return true;
     }
 
     /**
@@ -201,6 +207,9 @@ public class LibraryActivity extends AppCompatActivity {
 //            R.drawable.dummy_object};
 
         cursor.moveToNext();
+        if (cursor.getCount() == 0) {
+            return;
+        }
         String name = cursor.getString(nameColumnIndex);
         int counter = 0;
         int i = 0;
@@ -219,7 +228,7 @@ public class LibraryActivity extends AppCompatActivity {
             cursor.moveToNext();
             i++;
         }
-        a = new Album(name.toString(), counter, (int) covers.get(name));
+        a = new Album(name, counter, (int) covers.get(name));
         albumList.add(a);
 
 
@@ -323,4 +332,6 @@ public class LibraryActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }

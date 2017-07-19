@@ -4,22 +4,34 @@ package com.example.android.emsense3.Activity;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.emsense3.Fragments.HomeFragment;
 import com.example.android.emsense3.Fragments.ProfileFragment;
 import com.example.android.emsense3.Fragments.SettingsFragment;
 import com.example.android.emsense3.R;
+import com.example.android.emsense3.data.ItemsContract.LibraryDatabaseEntry;
+import com.example.android.emsense3.data.ItemsContract.LibraryEntry;
+import com.example.android.emsense3.data.ItemsDbHelper;
 
 
 //https://stackoverflow.com/questions/38011736/android-circle-profile-picture
@@ -77,6 +89,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
 
     //    Modify back button to close nav drawer
     @Override
@@ -153,5 +166,103 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fragment_container);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void detect(View view) {
+        final Context context = view.getContext();
+        Log.v(TAG, "Button pressed.");
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
+        helpBuilder.setTitle("ITEMS");
+        helpBuilder.setMessage("Enter serial number:");
+        final EditText input = new EditText(this);
+        input.setSingleLine();
+        input.setText("");
+        helpBuilder.setView(input);
+        helpBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String serialNumber = input.getText().toString();
+
+                        updateLibrary(serialNumber);
+                        Toast.makeText(context, "Items added", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
+
+    }
+
+    public void updateLibrary(String serialNumber) {
+//        Hardcoded way to prevent error (for now)
+        if (serialNumber.equals("deleteAll")) {
+            ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+            SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+            dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
+            return;
+        } else if (!serialNumber.equals("1A") &&
+                !serialNumber.equals("1B") &&
+                !serialNumber.equals("1C") &&
+                !serialNumber.equals("2A") &&
+                !serialNumber.equals("2B") &&
+                !serialNumber.equals("3A")) {
+            return;
+        }
+
+
+        ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+        SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+//                LibraryDatabaseEntry._ID,
+                LibraryDatabaseEntry.COLUMN_SERIAL_NUMBER,
+                LibraryDatabaseEntry.COLUMN_ITEMS,
+                LibraryDatabaseEntry.COLUMN_MODEL,
+                LibraryDatabaseEntry.COLUMN_SPECIFICATIONS
+        };
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LibraryDatabaseEntry.COLUMN_SERIAL_NUMBER + " = ?";
+        String[] selectionArgs = {serialNumber};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                LibraryDatabaseEntry.COLUMN_ITEMS + " ASC";
+
+//      Cursor object with one row of all the details from the database respective to the serial number
+        Cursor cursor = dbRead.query(
+                LibraryDatabaseEntry.TABLE_NAME,                  // The table to query
+                projection,                               // The columns to return
+                selection,                                     // The columns for the WHERE clause
+                selectionArgs,                                     // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        cursor.moveToFirst();
+
+
+        ContentValues values = new ContentValues();
+        values.put(LibraryEntry.COLUMN_SERIAL_NUMBER, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_SERIAL_NUMBER)));
+        values.put(LibraryEntry.COLUMN_MODEL, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL)));
+        values.put(LibraryEntry.COLUMN_ITEMS, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS)));
+        values.put(LibraryEntry.COLUMN_SPECIFICATIONS, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_SPECIFICATIONS)));
+
+        SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+//        Insert the new row, returning the primary key value of the new row
+        long newRowId = dbWrite.replace(LibraryEntry.TABLE_NAME, null, values);
+    }
+
+    public void deleteObjectFromLibrary(String serialNumber) {
+        ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+        SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+        String selection = LibraryEntry.COLUMN_SERIAL_NUMBER + " LIKE ?";
+        String[] selectionArgs = {serialNumber};
+        dbWrite.delete(LibraryEntry.TABLE_NAME, selection, selectionArgs);
+
     }
 }

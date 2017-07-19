@@ -5,6 +5,7 @@ package com.example.android.emsense3.Activity;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,15 +20,18 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.android.emsense3.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder> {
+
+public class AlbumAdapterObjects extends RecyclerView.Adapter<AlbumAdapterObjects.MyViewHolder> {
 
     private Context mContext;
     private List<Album> albumList;
 
-    public AlbumAdapter(Context mContext, List<Album> albumList) {
+    public AlbumAdapterObjects(Context mContext, List<Album> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
     }
@@ -42,7 +46,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Album album = albumList.get(position);
+        final Album album = albumList.get(position);
         holder.title.setText(album.getName());
         holder.count.setText(album.getNumOfSongs() + " items");
 
@@ -55,6 +59,21 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
                 showPopupMenu(holder.overflow);
             }
         });
+
+        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+                                                    Intent intent = new Intent(mContext, SpecificObjectActivity.class);
+                                                    String object = album.getName();
+                                                    intent.putExtra(EXTRA_MESSAGE, object);
+                                                    mContext.startActivity(intent);
+                                                }
+
+                                            }
+
+
+        );
     }
 
     /**
@@ -72,6 +91,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return albumList.size();
+    }
+
+    public void setFilter(ArrayList<Album> newList) {
+        albumList = new ArrayList<>();
+        albumList.addAll(newList);
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -98,8 +123,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
+                case R.id.action_delete:
+                    Toast.makeText(mContext, "Deleted successfully", Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.action_play_next:
                     Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
@@ -109,4 +134,5 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
             return false;
         }
     }
+
 }

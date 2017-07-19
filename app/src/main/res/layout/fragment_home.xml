@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_main"
+    android:id="@+id/fragment_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -73,6 +73,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="36dp"
             android:background="#00ffffff"
+            android:onClick="detect"
             android:scaleType="fitCenter"
             android:src="@drawable/main_screen_button1"
             app:layout_constraintHorizontal_bias="0.6"
@@ -81,4 +82,4 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
