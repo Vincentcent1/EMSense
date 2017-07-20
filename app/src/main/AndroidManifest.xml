@@ -34,6 +34,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.emsense3.Activity.LibraryActivity" />
         </activity>
+        <activity
+            android:name=".Activity.SpecificObjectActivity"
+            android:label="SpecificObjects"
+            android:parentActivityName=".Activity.ObjectsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
     </application>
 
 </manifest>
