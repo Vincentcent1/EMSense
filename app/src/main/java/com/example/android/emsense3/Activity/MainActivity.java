@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
 
         } else if (id == R.id.nav_profile) {
+            getSupportActionBar().setTitle("Profile");
             Fragment newFragment = new ProfileFragment();
             transaction.replace(R.id.fragment_container1, newFragment, newFragment.getTag());
             transaction.addToBackStack(null);
@@ -153,11 +154,13 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
 
         } else if (id == R.id.nav_settings) {
+            getSupportActionBar().setTitle("Settings");
             Fragment newFragment = new SettingsFragment();
             transaction.replace(R.id.fragment_container1, newFragment, newFragment.getTag());
             transaction.addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_about_us) {
+            getSupportActionBar().setTitle("About us");
 
         } else if (id == R.id.nav_privacy_policy) {
 
@@ -222,7 +225,9 @@ public class MainActivity extends AppCompatActivity
                 LibraryDatabaseEntry.COLUMN_SERIAL_NUMBER,
                 LibraryDatabaseEntry.COLUMN_ITEMS,
                 LibraryDatabaseEntry.COLUMN_MODEL,
-                LibraryDatabaseEntry.COLUMN_SPECIFICATIONS
+                LibraryDatabaseEntry.COLUMN_SPECIFICATIONS,
+                LibraryDatabaseEntry.COLUMN_IMAGE_ID,
+                LibraryDatabaseEntry.COLUMN_BANNER_ID
         };
         // Filter results WHERE "title" = 'My Title'
         String selection = LibraryDatabaseEntry.COLUMN_SERIAL_NUMBER + " = ?";
@@ -251,6 +256,8 @@ public class MainActivity extends AppCompatActivity
         values.put(LibraryEntry.COLUMN_MODEL, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL)));
         values.put(LibraryEntry.COLUMN_ITEMS, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS)));
         values.put(LibraryEntry.COLUMN_SPECIFICATIONS, cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_SPECIFICATIONS)));
+        values.put(LibraryEntry.COLUMN_BANNER_ID, cursor.getInt(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_BANNER_ID)));
+        values.put(LibraryEntry.COLUMN_IMAGE_ID, cursor.getInt(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_IMAGE_ID)));
 
         SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
 //        Insert the new row, returning the primary key value of the new row

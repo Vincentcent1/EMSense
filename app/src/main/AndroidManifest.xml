@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.emsense3">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,12 +25,12 @@
             android:name=".Activity.LibraryActivity"
             android:label="Library"
             android:parentActivityName=".Activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.Main" />
         <activity
             android:name=".Activity.ObjectsActivity"
             android:label="@string/title_activity_objects"
             android:parentActivityName=".Activity.LibraryActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.Detail">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -39,6 +41,18 @@
             android:label="SpecificObjects"
             android:parentActivityName=".Activity.ObjectsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".Activity.TutorialStepActivity"
+            android:label="TutorialStep"
+            android:parentActivityName=".Activity.SpecificObjectActivity"
+            android:theme="@style/AppTheme.NoActionBar.Tutorial" />
+
+        <activity
+            android:name=".Activity.YouTubeActivity"
+            android:label="TutorialStep"
+            android:parentActivityName=".Activity.SpecificObjectActivity"
+            android:theme="@style/AppTheme.NoActionBar.Tutorial" />
 
 
     </application>

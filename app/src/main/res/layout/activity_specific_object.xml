@@ -12,9 +12,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="56dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -27,27 +25,36 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             app:layout_collapseMode="pin"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+            app:navigationIcon="@drawable/ic_action_back"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
 
     </android.support.design.widget.AppBarLayout>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/specific_object_banner"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginTop="39dp"
         android:cropToPadding="false"
+        android:elevation="3dp"
         android:scaleType="centerCrop"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:transitionName="image_transition"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/dummy_object" />
+        app:layout_constraintTop_toBottomOf="@+id/appbar"
+        app:srcCompat="@drawable/banner_lasercutter_thunderlasersystem_small" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0.1dp"
+        android:background="@color/Transparent"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/specific_object_banner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton_1"
+        android:id="@+id/button_info"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
@@ -56,28 +63,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="173dp"
         android:background="@drawable/roundbutton"
-        android:backgroundTint="?attr/colorButtonNormal"
-        android:elevation="10dp"
+        android:elevation="6dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/imageButton_2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintRight_toLeftOf="@+id/button_step"
+        app:layout_constraintTop_toTopOf="@+id/specific_object_banner"
         app:srcCompat="@mipmap/ic_action_about" />
 
     <ImageButton
-        android:id="@+id/imageButton_2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/roundbutton"
-        android:backgroundTint="?attr/colorButtonNormal"
-        app:layout_constraintLeft_toRightOf="@+id/imageButton_1"
-        app:layout_constraintRight_toLeftOf="@+id/imageButton_3"
-        app:layout_constraintTop_toTopOf="@+id/imageButton_1"
-        app:srcCompat="@mipmap/ic_action_view_as_list" />
-
-    <ImageButton
-        android:id="@+id/imageButton_3"
+        android:id="@+id/button_step"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
@@ -85,17 +78,64 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/roundbutton"
-        android:backgroundTint="?attr/colorButtonNormal"
-        app:layout_constraintLeft_toRightOf="@+id/imageButton_2"
+        android:elevation="6dp"
+        app:layout_constraintLeft_toRightOf="@+id/button_info"
+        app:layout_constraintRight_toLeftOf="@+id/button_video"
+        app:layout_constraintTop_toTopOf="@+id/button_info"
+        app:srcCompat="@mipmap/ic_action_view_as_list" />
+
+    <ImageButton
+        android:id="@+id/button_video"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/roundbutton"
+        android:elevation="6dp"
+
+        app:layout_constraintLeft_toRightOf="@+id/button_step"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageButton_2"
+        app:layout_constraintTop_toTopOf="@+id/button_step"
         app:srcCompat="@mipmap/ic_action_play_over_video" />
+
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_begin="20dp"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/lasercutter_thunderlasersystemsmini"
+        android:textColor="@color/Black"
+        android:textSize="32sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_step" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/lasercutter_thunderlasersystemsmini_description"
+        android:textColor="@color/Black"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
 </android.support.constraint.ConstraintLayout>

@@ -41,9 +41,10 @@
                 android:layout_height="96dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
-                android:background="@color/Transparent"
+                android:background="@drawable/main_button_background_recent"
+                android:padding="12dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/main_recent_dummy" />
+                app:srcCompat="@drawable/threedprinter_davincimini_icon" />
 
             <ImageButton
                 android:id="@+id/imageButtonRecent2"
@@ -51,18 +52,20 @@
                 android:layout_height="96dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
-                android:background="@color/Transparent"
+                android:background="@drawable/main_button_background_recent"
+                android:padding="12dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/main_recent_dummy" />
+                app:srcCompat="@drawable/threedprinter_einstart_icon" />
 
             <ImageButton
                 android:id="@+id/imageButtonRecent3"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:layout_weight="1"
-                android:background="@color/Transparent"
+                android:background="@drawable/main_button_background_recent"
+                android:padding="12dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/main_recent_dummy" />
+                app:srcCompat="@drawable/lasercutter_thunderlasersystemsmini_icon" />
         </LinearLayout>
 
         <ImageButton

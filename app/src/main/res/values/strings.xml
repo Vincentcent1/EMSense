@@ -36,6 +36,63 @@
     <string name="activity_library">Library</string>
     <string name="title_activity_objects">ObjectsActivity</string>
 
+    <string name="tutorial_step_next">next</string>
+    <string name="tutorial_step_close">close</string>
+    <string name="tutorial_step_done">done</string>
+
+    <!--Youtube Screen-->
+    <string name="youtube_error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="youtube_items_title">ITEMS</string>
+
+
+    <!--EPILOG LASER GALVO TUTORIAL-->
+    <string name="lasercutter_epiloglasergalvo_general_1">
+        Plug the power cord into the G2.
+        Take note that the main power switch is at the back of the machine, and the on/off switch sat the control panel.
+    </string>
+    <string name="lasercutter_epiloglasergalvo_general_2">
+        The primary On/Off switch is located on the side of the control panel.
+        This switch is used on a daily basis for turning the G2 On/Off.
+    </string>
+    <string name="lasercutter_epiloglasergalvo_general_3">
+        Connect the USB cable or Ethernet cable from your computer to the G2.
+        The USB and Ethernet connections are on the left side of the G2.
+    </string>
+    <string name="lasercutter_epiloglasergalvo_general_4">
+        There are two 4” (100 mm) exhaust ports at the back of the machine.
+        Connect a 350 CFM exhaust fan to the ports and vent to the outside
+    </string>
+
+
+    <!--THUNDER LASER SYSTEMS MINI TUTORIAL-->
+    <string name="lasercutter_thunderlasersystemsmini">
+        Thunder Laser Systems Mini-60, Laser Cutter
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_description">
+        A machine catered to precision and performance,
+        it is ideal for novices looking to learn and create laser cut projects quickly and efficiently.
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_general_1">
+        Take out the sponge around the laser tube as seen in the picture.
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_general_2">
+        Take out the nylon cable ties around the honey comb plate and X axis.
+        Remove the transparent bag out of the mirror mounts and install the laser head.
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_general_3">
+        Open the rotate emergency switch
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_connections_1">
+        Connect the Exhaust System
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_connections_2">
+        Connect the Air system
+    </string>
+    <string name="lasercutter_thunderlasersystemsmini_connections_3">
+        Connect the water cooling system
+    </string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

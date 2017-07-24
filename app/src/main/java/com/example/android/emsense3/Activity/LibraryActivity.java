@@ -4,13 +4,16 @@ package com.example.android.emsense3.Activity;
  * Created by slzh645 on 7/11/2017.
  */
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.emsense3.Other.ObjectItemClickListener;
 import com.example.android.emsense3.R;
 import com.example.android.emsense3.data.ItemsContract.LibraryEntry;
 import com.example.android.emsense3.data.ItemsDbHelper;
@@ -34,7 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LibraryActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
+public class LibraryActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ObjectItemClickListener {
 
     private static final String TAG = "LibraryActivity";
     ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
@@ -92,7 +98,7 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         albumList = new ArrayList<>();
-        adapter = new AlbumAdapterLibrary(this, albumList);
+        adapter = new AlbumAdapterLibrary(this, albumList, this);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -188,23 +194,11 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
 
         Map covers = new HashMap();
 //        add image accordingly here
-        covers.put("3D Printer", R.drawable.dummy_object);
-        covers.put("Drill", R.drawable.drop_down_bg);
-        covers.put("Laser Cutter", R.drawable.ic_audio_black_24dp);
+        covers.put("3D Printer", R.drawable.library_image_3dprinter);
+        covers.put("Drill", R.drawable.library_image_drill);
+        covers.put("Laser Cutter", R.drawable.library_image_laser);
 
 
-//        int[] covers = new int[]{
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object};
 
         cursor.moveToNext();
         if (cursor.getCount() == 0) {
@@ -230,60 +224,6 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
         }
         a = new Album(name, counter, (int) covers.get(name));
         albumList.add(a);
-
-
-//        Set<String> objectSet = new LinkedHashSet<String>();
-//        for (int i = 0; i < cursor.getCount();i++){
-//            cursor.moveToNext();
-//            int nameColumnIndex =
-//                    cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
-//            String name = cursor.getString(nameColumnIndex);
-//            objectSet.add(name);
-//            String done = "done" + i;
-//            Log.v(TAG,done);
-//        }
-//        cursor.close();
-//        Log.v(TAG,objectSet.toString());
-
-//        Album a;
-//        Iterator iterator = objectSet.iterator();
-//        while (iterator.hasNext()){
-//            Object name = iterator.next();
-//            a = new Album(name.toString(), 1, covers[0]);
-//            albumList.add(a);
-//        }
-
-
-//        Album a = new Album("3D Printer", 13, covers[0]);
-//        albumList.add(a);
-//
-//        a = new Album("Laser Cutter", 8, covers[1]);
-//        albumList.add(a);
-//
-//        a = new Album("Smart Fridge", 11, covers[2]);
-//        albumList.add(a);
-//
-//        a = new Album("Soldering Iron", 12, covers[3]);
-//        albumList.add(a);
-//
-//        a = new Album("Hand Drill", 14, covers[4]);
-//        albumList.add(a);
-//
-//        a = new Album("Calculator", 1, covers[5]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Uno", 11, covers[6]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Trio", 14, covers[7]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Nano", 11, covers[8]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Duo", 17, covers[9]);
-//        albumList.add(a);
-
         adapter.notifyDataSetChanged();
     }
 
@@ -293,6 +233,24 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    @Override
+    public void onObjectItemClick(int pos, Album albumItem, ImageView objectView) {
+        Intent intent = new Intent(this, ObjectsActivity.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setEnterTransition(new Slide());
+//            getWindow().setEnterTransition(new Fade(Fade.OUT));
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this,
+                    objectView,
+                    "image_transition");
+            String object = albumItem.getName();
+            intent.putExtra(EXTRA_MESSAGE, object);
+            startActivity(intent, options.toBundle());
+        }
+
     }
 
     /**

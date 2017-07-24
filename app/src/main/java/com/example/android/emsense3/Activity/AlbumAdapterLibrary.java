@@ -5,7 +5,6 @@ package com.example.android.emsense3.Activity;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,22 +17,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.android.emsense3.Other.ObjectItemClickListener;
 import com.example.android.emsense3.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
-
 
 public class AlbumAdapterLibrary extends RecyclerView.Adapter<AlbumAdapterLibrary.MyViewHolder> {
 
+    private final ObjectItemClickListener objectItemClickListener;
     private Context mContext;
     private List<Album> albumList;
 
-    public AlbumAdapterLibrary(Context mContext, List<Album> albumList) {
+    public AlbumAdapterLibrary(Context mContext, List<Album> albumList, ObjectItemClickListener objectItemClickListener) {
         this.mContext = mContext;
         this.albumList = albumList;
+        this.objectItemClickListener = objectItemClickListener;
     }
 
     @Override
@@ -63,11 +63,11 @@ public class AlbumAdapterLibrary extends RecyclerView.Adapter<AlbumAdapterLibrar
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
+                                                    ImageView objectView = view.findViewById(R.id.thumbnail);
+                                                    objectItemClickListener.onObjectItemClick(
+                                                            holder.getAdapterPosition(), album, objectView
+                                                    );
 
-                                                    Intent intent = new Intent(mContext, ObjectsActivity.class);
-                                                    String object = album.getName();
-                                                    intent.putExtra(EXTRA_MESSAGE, object);
-                                                    mContext.startActivity(intent);
                                                 }
 
                                             }

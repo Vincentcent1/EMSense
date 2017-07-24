@@ -9,9 +9,11 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.emsense3.Other.ObjectItemClickListener;
 import com.example.android.emsense3.R;
 import com.example.android.emsense3.data.ItemsContract.LibraryEntry;
 import com.example.android.emsense3.data.ItemsDbHelper;
@@ -37,22 +40,27 @@ import java.util.Map;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ObjectItemClickListener {
 
     private static final String TAG = "ObjectsActivity";
-    ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+    private ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
     private RecyclerView recyclerView;
     private AlbumAdapterObjects adapter;
     private List<Album> albumList;
+    private ImageView bannerImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.content_objects);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        bannerImage = (ImageView) findViewById(R.id.objects_banner);
+
+        toolbar.setTitle("Laser Cutters");
+        setSupportActionBar(toolbar);
         initCollapsingToolbar();
+
 
         //Database Stuff
 
@@ -63,8 +71,12 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         // you will actually use after this query.
         String[] projection = {
 //                LibraryEntry._ID,
-                LibraryEntry.COLUMN_ITEMS,
-                LibraryEntry.COLUMN_MODEL
+                LibraryEntry.COLUMN_SERIAL_NUMBER,
+                LibraryEntry.COLUMN_MODEL,
+                LibraryEntry.COLUMN_IMAGE_ID
+
+
+
         };
 
         // Filter results WHERE "title" = 'My Title'
@@ -72,6 +84,9 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
 
         Intent intent = getIntent();
         String object = intent.getStringExtra(EXTRA_MESSAGE);
+        setBannerImage(object);
+
+
 
 
         String[] selectionArgs = {object};
@@ -94,7 +109,7 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         albumList = new ArrayList<>();
-        adapter = new AlbumAdapterObjects(this, albumList);
+        adapter = new AlbumAdapterObjects(this, albumList, this);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -103,6 +118,7 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         recyclerView.setAdapter(adapter);
 
         prepareAlbums(cursor);
+        cursor.close();
 
         try {
             Glide.with(this).load(R.drawable.library_banner).into((ImageView) findViewById(R.id.backdrop));
@@ -188,50 +204,27 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
 
         Album a;
 
-        Map covers = new HashMap();
-//        add image accordingly here
-        covers.put("3D Printer", R.drawable.dummy_object);
-        covers.put("Drill", R.drawable.drop_down_bg);
-        covers.put("Laser Cutter", R.drawable.ic_audio_black_24dp);
 
 
-//        int[] covers = new int[]{
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object,
-//            R.drawable.dummy_object};
 
-        cursor.moveToNext();
+
         int modelNameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_MODEL);
-        String modelName = cursor.getString(modelNameColumnIndex);
-        int itemsNameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
-        String itemsName = cursor.getString(itemsNameColumnIndex);
-        int counter = 0;
+        String modelName;
+//        int itemsNameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
+//        String itemsName = cursor.getString(itemsNameColumnIndex);
+        int imageIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_IMAGE_ID);
+        int imageId;
         int i = 0;
-        while (i < cursor.getCount()) {
+        int counter = 1;
 
-            if (!modelName.equals(cursor.getString(modelNameColumnIndex))) {
-                a = new Album(modelName, counter, (int) covers.get(itemsName));
-                albumList.add(a);
-                modelName = cursor.getString(modelNameColumnIndex);
-                counter = 1;
-            } else {
-                counter++;
-
-            }
-
-            cursor.moveToNext();
-            i++;
+        while (cursor.moveToNext()) {
+            modelName = cursor.getString(modelNameColumnIndex);
+            imageId = cursor.getInt(imageIdColumnIndex);
+            a = new Album(modelName, counter, imageId);
+            albumList.add(a);
         }
-        a = new Album(modelName, counter, (int) covers.get(itemsName));
-        albumList.add(a);
+//        a = new Album(modelName, counter, imageId);
+//        albumList.add(a);
 
 
 //        Set<String> objectSet = new LinkedHashSet<String>();
@@ -256,38 +249,9 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
 //        }
 
 
-//        Album a = new Album("3D Printer", 13, covers[0]);
-//        albumList.add(a);
-//
-//        a = new Album("Laser Cutter", 8, covers[1]);
-//        albumList.add(a);
-//
-//        a = new Album("Smart Fridge", 11, covers[2]);
-//        albumList.add(a);
-//
-//        a = new Album("Soldering Iron", 12, covers[3]);
-//        albumList.add(a);
-//
-//        a = new Album("Hand Drill", 14, covers[4]);
-//        albumList.add(a);
-//
-//        a = new Album("Calculator", 1, covers[5]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Uno", 11, covers[6]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Trio", 14, covers[7]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Nano", 11, covers[8]);
-//        albumList.add(a);
-//
-//        a = new Album("Arduino Duo", 17, covers[9]);
-//        albumList.add(a);
-
         adapter.notifyDataSetChanged();
     }
+
 
     /**
      * Converting dp to pixel
@@ -295,6 +259,36 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    @Override
+    public void onObjectItemClick(int pos, Album albumItem, ImageView objectView) {
+        Intent intent = new Intent(this, SpecificObjectActivity.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setEnterTransition(new Slide());
+//            getWindow().setEnterTransition(new Fade(Fade.OUT));
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this,
+                    objectView,
+                    "image_transition");
+            String object = albumItem.getName();
+            intent.putExtra(EXTRA_MESSAGE, object);
+            startActivity(intent, options.toBundle());
+        }
+
+    }
+
+    public void setBannerImage(String objectName) {
+        Map banner = new HashMap();
+//        add image accordingly here
+        banner.put("3D Printer", R.drawable.banner_threedprinter);
+        banner.put("Mobile Phone", R.drawable.banner_phone);
+        banner.put("Laser Cutter", R.drawable.banner_lasercutter);
+        banner.put("Laptop", R.drawable.banner_laptop);
+        banner.put("Printer", R.drawable.banner_printer);
+
+        bannerImage.setImageResource((int) banner.get(objectName));
     }
 
     /**
