@@ -3,14 +3,14 @@
     android:interpolator="@android:anim/linear_interpolator">
 
     <scale
-        android:duration="200"
+        android:duration="300"
         android:fromXScale="1.0"
         android:fromYScale="1.0"
         android:pivotX="50%"
         android:pivotY="50%"
         android:repeatCount="1"
         android:repeatMode='reverse'
-        android:toXScale="2.0"
-        android:toYScale="2.0" />
+        android:toXScale="1.2"
+        android:toYScale="1.2" />
 
 </set>

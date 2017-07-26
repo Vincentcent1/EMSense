@@ -111,7 +111,7 @@
         tools:layout_editor_absoluteY="0dp" />
 
     <TextView
-        android:id="@+id/textView14"
+        android:id="@+id/specific_object_itemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -120,12 +120,13 @@
         android:text="@string/lasercutter_thunderlasersystemsmini"
         android:textColor="@color/Black"
         android:textSize="32sp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_step" />
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/specific_object_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -136,6 +137,6 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+        app:layout_constraintTop_toBottomOf="@+id/specific_object_itemName" />
 
 </android.support.constraint.ConstraintLayout>

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.android.emsense3.R;
 import com.example.android.emsense3.data.ItemsContract.LibraryEntry;
@@ -21,9 +22,11 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class SpecificObjectActivity extends AppCompatActivity {
 
-    private ImageView bannerImage;
+    private ImageView bannerImageView;
+    private TextView descriptionTextView, titleTextView;
     private ImageButton btnStep, btnInfo, btnVideo;
     private ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+    private String objectName;
 
 
     @Override
@@ -35,12 +38,37 @@ public class SpecificObjectActivity extends AppCompatActivity {
         toolbar.setTitle("Thunder Laser Systems Mini");
         setSupportActionBar(toolbar);
 
-        bannerImage = (ImageView) findViewById(R.id.specific_object_banner);
+        bannerImageView = (ImageView) findViewById(R.id.specific_object_banner);
 
+        descriptionTextView = (TextView) findViewById(R.id.specific_object_description);
+        titleTextView = (TextView) findViewById(R.id.specific_object_itemName);
 
         btnStep = (ImageButton) findViewById(R.id.button_step);
         btnInfo = (ImageButton) findViewById(R.id.button_info);
         btnVideo = (ImageButton) findViewById(R.id.button_video);
+
+        Intent intent = getIntent();
+        objectName = intent.getStringExtra(EXTRA_MESSAGE);
+
+        Cursor cursor = createCursor();
+
+        cursor.moveToNext();
+        int bannerIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_BANNER_ID);
+        int bannerId = cursor.getInt(bannerIdColumnIndex);
+        setBannerImage(bannerId);
+
+        int descriptionColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_DESCRIPTION);
+        String description = cursor.getString(descriptionColumnIndex);
+        descriptionTextView.setText(description);
+
+        int serialNumberColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_SERIAL_NUMBER);
+        final String serialNumber = cursor.getString(serialNumberColumnIndex);
+
+        int youtubeIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_YOUTUBE_ID);
+        final String youtubeId = cursor.getString(youtubeIdColumnIndex);
+
+
+
 
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -53,59 +81,21 @@ public class SpecificObjectActivity extends AppCompatActivity {
         btnStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchTutorialStepActivity();
+                launchTutorialStepActivity(serialNumber);
             }
         });
 
         btnVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchYoutubeActivity();
+                launchYoutubeActivity(youtubeId);
             }
         });
 
-        //Database Stuff
 
-        SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
-
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-//                LibraryEntry._ID,
-                LibraryEntry.COLUMN_BANNER_ID
+        titleTextView.setText(objectName);
 
 
-        };
-
-        // Filter results WHERE "title" = 'My Title'
-        String selection = LibraryEntry.COLUMN_MODEL + " = ?";
-
-        Intent intent = getIntent();
-        String object = intent.getStringExtra(EXTRA_MESSAGE);
-
-
-        String[] selectionArgs = {object};
-
-        // How you want the results sorted in the resulting Cursor
-//        String sortOrder =
-//                LibraryEntry.COLUMN_MODEL + " ASC";
-
-        Cursor cursor = dbRead.query(
-                LibraryEntry.TABLE_NAME,                  // The table to query
-                projection,                               // The columns to return
-                selection,                                     // The columns for the WHERE clause
-                selectionArgs,                                     // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                 // The sort order
-        );
-
-        cursor.moveToNext();
-        int bannerIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_BANNER_ID);
-        int bannerId = cursor.getInt(bannerIdColumnIndex);
-
-        setBannerImage(bannerId);
         cursor.close();
     }
 
@@ -132,18 +122,59 @@ public class SpecificObjectActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void launchTutorialStepActivity() {
-        startActivity(new Intent(SpecificObjectActivity.this, TutorialStepActivity.class));
+    private void launchTutorialStepActivity(String serialNumber) {
+        Intent intent = new Intent(this, TutorialStepActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, serialNumber);
+        startActivity(intent);
 
     }
 
-    private void launchYoutubeActivity() {
+    private void launchYoutubeActivity(String youtubeId) {
+        Intent intent = new Intent(this, YouTubeActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, youtubeId);
         startActivity(new Intent(SpecificObjectActivity.this, YouTubeActivity.class));
 
     }
 
-    public void setBannerImage(int bannerId) {
-        bannerImage.setImageResource(bannerId);
+    private void setBannerImage(int bannerId) {
+        bannerImageView.setImageResource(bannerId);
     }
+
+    private Cursor createCursor() {
+        SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+//                LibraryEntry._ID,
+                LibraryEntry.COLUMN_BANNER_ID,
+                LibraryEntry.COLUMN_MODEL,
+                LibraryEntry.COLUMN_DESCRIPTION,
+                LibraryEntry.COLUMN_SERIAL_NUMBER,
+                LibraryEntry.COLUMN_YOUTUBE_ID,
+
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LibraryEntry.COLUMN_MODEL + " = ?";
+
+
+        String[] selectionArgs = {objectName};
+
+        // How you want the results sorted in the resulting Cursor
+//        String sortOrder =
+//                LibraryEntry.COLUMN_MODEL + " ASC";
+
+        Cursor cursor = dbRead.query(
+                LibraryEntry.TABLE_NAME,                  // The table to query
+                projection,                               // The columns to return
+                selection,                                     // The columns for the WHERE clause
+                selectionArgs,                                     // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+
+        return cursor;
+    }
+
 
 }

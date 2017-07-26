@@ -13,24 +13,29 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 /**
  * Created by slzh645 on 7/23/2017.
  */
 
 public class YouTubeActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
     private static final int RECOVERY_DIALOG_REQUEST = 1;
+    private String youtubeId;
 
     // YouTube player view
     private YouTubePlayerView youTubeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        youtubeId = intent.getStringExtra(EXTRA_MESSAGE);
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.content_youtube);
+        setContentView(R.layout.activity_youtube);
 
         youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
 
@@ -57,7 +62,7 @@ public class YouTubeActivity extends YouTubeBaseActivity implements YouTubePlaye
 
             // loadVideo() will auto play video
             // Use cueVideo() method, if you don't want to play it automatically
-            player.loadVideo(Config.YOUTUBE_VIDEO_CODE);
+            player.loadVideo(youtubeId);
 
             // Hiding player controls
             player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);

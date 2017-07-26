@@ -45,7 +45,156 @@
     <string name="youtube_items_title">ITEMS</string>
 
 
+    <!--DAVINCI MINI TUTORIAL-->
+
+    <string name="threedprinter_davincimini_setup_1">
+        Ensure that the printer is powered off.
+        Place the extruder module such that the fitting pin is secured in the proper location.
+    </string>
+    <string name="threedprinter_davincimini_setup_2">
+        Plug the ribbon connector to the housing located on the extruder module.
+    </string>
+    <string name="threedprinter_davincimini_setup_3">
+        Attach the power cord to the power adapter and plug the power adapter to the da Vinci Mini.
+    </string>
+    <string name="threedprinter_davincimini_setup_4">
+        Ensure that the guide tube is properly connected to the feeder module.
+    </string>
+    <string name="threedprinter_davincimini_setup_5">
+        Feed the other end of the tube through the top and insert it into the extruder module.
+    </string>
+    <string name="threedprinter_davincimini_setup_6">
+        Unpeel the bed tape and smoothly apply it to the print bed.
+    </string>
+    <string name="threedprinter_davincimini_setup_7">
+        Open spool holder case and pull down the spool holder.
+    </string>
+    <string name="threedprinter_davincimini_setup_8">
+        Place the assembled filament spool on spool holder. After which, remember to cut the filament at 45°.
+    </string>
+    <string name="threedprinter_davincimini_setup_9">
+        Pull the lever and insert the filament through the feed module.
+    </string>
+    <string name="threedprinter_davincimini_filament_1">
+        Remove the side cover by pressing down firmly on the left side of the cover, pushing it apart.
+    </string>
+    <string name="threedprinter_davincimini_filament_2">
+        Lower the filament spool holder on the left side of the printer until it is horizontal.
+    </string>
+    <string name="threedprinter_davincimini_filament_3">
+        Place the assembled filament spool (with the spool ring) on the spool holder.
+    </string>
+    <string name="threedprinter_davincimini_filament_4">
+        Take the tip of the filament and insert it into the feeding hole.
+    </string>
+    <string name="threedprinter_davincimini_filament_5">
+        Press the release arm and push the filament all the way to the bottom
+        such that the front end of the filament is completely inserted into the extruder module.
+    </string>
+
+
+    <!--LULZBOT MINI TUTORIAL-->
+
+    <string name="threedprinter_lulzbotmini_setup_1">
+        Connect the power cord and power on the Lulzbot Mini. Connect the USB cable to your computer.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_2">
+        Using the software, control the Lulzbot Mini on the interface by the ‘Control’ button.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_3">
+        At the Printer Interface window,
+        raise the hot end of the temperature up to 205°C by typing 205 under “Temperature” and clicking Set.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_4">
+        Proceed to install/replace the filament if needed.
+        Refer to “Installing/Replacing the filament” section for a step-by-step guide.
+    </string>
+    <string name="threedprinter_lulzbotmini_filament_1">
+        Using the idler retainer, compress the springs and slide up,
+        allowing the hinged idler to move freely. Then lower the hinged idler counter-clockwise.
+    </string>
+    <string name="threedprinter_lulzbotmini_filament_2">
+        Wait until temperature reaches 205°C.
+        After which, pinch the PLA filament loaded in the tool head and remove it by pulling up.
+    </string>
+    <string name="threedprinter_lulzbotmini_filament_3">
+        To load filament, face the front of the printer and
+        locate the filament holder mounted to the top right corner of the printer frame.
+        Rotate the filament holder counter-clockwise into an upright position.
+    </string>
+    <string name="threedprinter_lulzbotmini_filament_4">
+        Mount the PLA filament sample on the filament holder so that the filament can feed down into the tool head.
+    </string>
+    <string name="threedprinter_lulzbotmini_filament_5">
+        Feed the filament through the feed hole in the extruder body.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_5">
+        Compress the springs with the idler retainer and rotate the hinged idler clockwise into an upright position.
+        Lock the hinged idler into place by sliding the idler retainer back down.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_6">
+        Verify the print extrusion by clicking on the Extrude 10 button in the interface and
+        look for filament to feed through the nozzle.
+    </string>
+    <string name="threedprinter_lulzbotmini_setup_7">
+        Click Print in the Printer interface window to start the 3D print.
+    </string>
+
+
+    <!--MAKERBOT REPLICATOR MINI+ TUTORIAL-->
+
+    <string name="threedprinter_makerbotreplicatormini_setup_1">
+        Install the MakerBot Replicator Smart Extruder. Align it with the magnets in place.
+    </string>
+    <string name="threedprinter_makerbotreplicatormini_setup_2">
+        Install the spool of the Makerbot PLA Filament.
+    </string>
+    <string name="threedprinter_makerbotreplicatormini_setup_3">
+        Once installed, push the filament through the filament guide tube until two inches comes out the other side,
+        and then clip the guide tube in place.
+    </string>
+    <string name="threedprinter_makerbotreplicatormini_setup_4">
+        Install the build plate into the body of the printer.
+    </string>
+    <string name="threedprinter_makerbotreplicatormini_setup_5">
+        Connect the 3D Printer to the computer using a USB cable as well as to a power supply and power on the switch.
+    </string>
+
+
+    <!--EINSTART TUTORIAL-->
+
+    <string name="threedprinter_einstart_setup_1">
+        Attach the printing surface to the printer.
+    </string>
+    <string name="threedprinter_einstart_setup_2">
+        Plug the power cord into a standard outlet and plug in the adaptor. Power on the device.
+    </string>
+    <string name="threedprinter_einstart_setup_3">
+        Hold down the ‘OK’ button for five seconds to power on the device.
+    </string>
+    <string name="threedprinter_einstart_setup_4">
+        On the OLED operation screen, select ‘Fast Operation’ or ‘Build from SD’ and press ‘OK’.
+        Select your file and print.
+    </string>
+    <string name="threedprinter_einstart_filament_1">
+        Clip the end of the PLA roll, ensuring that it is flat.
+    </string>
+    <string name="threedprinter_einstart_filament_2">
+        Place the PLA roll in the filament roll area.
+    </string>
+    <string name="threedprinter_einstart_filament_3">
+        Thread the filament through the top of the printer and into the printing head
+    </string>
+    <string name="threedprinter_einstart_filament_4">
+        On the OLED operation screen, press the down button and select ‘Load’.
+    </string>
+    <string name="threedprinter_einstart_filament_5">
+        Wait until the filament is extruding from the nozzle, then press ‘Left’ and ‘OK’ to stop the loading process.
+    </string>
+
+
     <!--EPILOG LASER GALVO TUTORIAL-->
+
     <string name="lasercutter_epiloglasergalvo_general_1">
         Plug the power cord into the G2.
         Take note that the main power switch is at the back of the machine, and the on/off switch sat the control panel.
@@ -65,6 +214,7 @@
 
 
     <!--THUNDER LASER SYSTEMS MINI TUTORIAL-->
+
     <string name="lasercutter_thunderlasersystemsmini">
         Thunder Laser Systems Mini-60, Laser Cutter
     </string>

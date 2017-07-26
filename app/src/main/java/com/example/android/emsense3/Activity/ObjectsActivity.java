@@ -73,7 +73,7 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
 //                LibraryEntry._ID,
                 LibraryEntry.COLUMN_SERIAL_NUMBER,
                 LibraryEntry.COLUMN_MODEL,
-                LibraryEntry.COLUMN_IMAGE_ID
+                LibraryEntry.COLUMN_ICON_ID
 
 
 
@@ -212,15 +212,15 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         String modelName;
 //        int itemsNameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
 //        String itemsName = cursor.getString(itemsNameColumnIndex);
-        int imageIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_IMAGE_ID);
-        int imageId;
+        int iconIdColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ICON_ID);
+        int iconId;
         int i = 0;
         int counter = 1;
 
         while (cursor.moveToNext()) {
             modelName = cursor.getString(modelNameColumnIndex);
-            imageId = cursor.getInt(imageIdColumnIndex);
-            a = new Album(modelName, counter, imageId);
+            iconId = cursor.getInt(iconIdColumnIndex);
+            a = new Album(modelName, counter, iconId);
             albumList.add(a);
         }
 //        a = new Album(modelName, counter, imageId);

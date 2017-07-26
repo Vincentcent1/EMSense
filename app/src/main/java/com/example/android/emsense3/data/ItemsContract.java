@@ -19,10 +19,11 @@ public final class ItemsContract {
         public static final String COLUMN_SERIAL_NUMBER = "serialNumber";
         public static final String COLUMN_ITEMS = "items";
         public static final String COLUMN_MODEL = "model";
+        public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_SPECIFICATIONS = "specs";
         public static final String COLUMN_BANNER_ID = "bannerId";
-        public static final String COLUMN_IMAGE_ID = "imageId";
-
+        public static final String COLUMN_ICON_ID = "iconId";
+        public static final String COLUMN_YOUTUBE_ID = "youtubeId";
     }
 
     public static class LibraryDatabaseEntry implements BaseColumns {
@@ -32,10 +33,11 @@ public final class ItemsContract {
         public static final String COLUMN_SERIAL_NUMBER = "serialNumber";
         public static final String COLUMN_ITEMS = "items";
         public static final String COLUMN_MODEL = "model";
+        public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_SPECIFICATIONS = "specs";
         public static final String COLUMN_BANNER_ID = "bannerId";
-        public static final String COLUMN_IMAGE_ID = "imageId";
-//        public static final String COLUMN_BANNER_ID = "bannerId";
+        public static final String COLUMN_ICON_ID = "imageId";
+        public static final String COLUMN_YOUTUBE_ID = "youtubeId";
     }
 
     public static class ImageEntry implements BaseColumns {

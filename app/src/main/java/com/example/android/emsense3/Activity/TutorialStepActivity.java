@@ -1,9 +1,12 @@
 package com.example.android.emsense3.Activity;
 
-import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -11,10 +14,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.emsense3.R;
+import com.example.android.emsense3.data.ItemsContract.ImageEntry;
+import com.example.android.emsense3.data.ItemsDbHelper;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 /**
  * Created by setia on 7/22/2017.
@@ -26,7 +34,9 @@ public class TutorialStepActivity extends AppCompatActivity {
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
     private TextView[] dots;
-    private int[] layouts;
+    private int numOfSteps;
+    private String serialNumber;
+    private Cursor cursor;
     private Button btnClose, btnNext;
     //  viewpager change listener
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -36,7 +46,7 @@ public class TutorialStepActivity extends AppCompatActivity {
             addBottomDots(position);
 
             // changing the next button text 'NEXT' / 'GOT IT'
-            if (position == layouts.length - 1) {
+            if (position == numOfSteps - 1) {
                 // last page. make button text to GOT IT
                 btnNext.setText(getString(R.string.tutorial_step_done));
                 btnClose.setVisibility(View.GONE);
@@ -64,32 +74,29 @@ public class TutorialStepActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_tutorial_step);
 
+        Intent intent = getIntent();
+        serialNumber = intent.getStringExtra(EXTRA_MESSAGE);
+
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnNext = (Button) findViewById(R.id.btn_next);
         btnClose = (Button) findViewById(R.id.btn_close);
 
-        // layouts of all welcome sliders
-        // add few more layouts if you want
-        layouts = new int[]{
-                R.layout.tutorial_step_1,
-                R.layout.tutorial_step_2,
-                R.layout.tutorial_step_3,
-                R.layout.tutorial_step_4,
-                R.layout.tutorial_step_5,
-                R.layout.tutorial_step_6};
+        cursor = createCursor();
 
-        // adding bottom dots
+
+        numOfSteps = cursor.getCount();
+
         addBottomDots(0);
 
-        myViewPagerAdapter = new MyViewPagerAdapter();
+        myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchSpecificObjectActivity();
+                onBackPressed();
             }
         });
 
@@ -99,18 +106,18 @@ public class TutorialStepActivity extends AppCompatActivity {
                 // checking for last page
                 // if last page home screen will be launched
                 int current = getItem(+1);
-                if (current < layouts.length) {
+                if (current < numOfSteps) {
                     //move to next screen
                     viewPager.setCurrentItem(current);
                 } else {
-                    launchSpecificObjectActivity();
+                    onBackPressed();
                 }
             }
         });
     }
 
     private void addBottomDots(int currentPage) {
-        dots = new TextView[layouts.length];
+        dots = new TextView[numOfSteps];
         int colorsActive = getResources().getColor(R.color.White);
         int colorsInactive = getResources().getColor(R.color.DarkGrey);
 
@@ -133,45 +140,153 @@ public class TutorialStepActivity extends AppCompatActivity {
         return viewPager.getCurrentItem() + i;
     }
 
-    private void launchSpecificObjectActivity() {
-        startActivity(new Intent(TutorialStepActivity.this, SpecificObjectActivity.class));
-        finish();
+//    private void launchSpecificObjectActivity() {
+//        startActivity(new Intent(TutorialStepActivity.this, SpecificObjectActivity.class));
+//        finish();
+//    }
+
+    private Cursor createCursor() {
+        ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
+
+        SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
+
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                //LibraryEntry._ID,
+                ImageEntry.COLUMN_STEP,
+                ImageEntry.COLUMN_IMAGE_ID,
+                ImageEntry.COLUMN_TEXT_ID
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = ImageEntry.COLUMN_SERIAL_NUMBER + " = ?";
+        String[] selectionArgs = {serialNumber};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                ImageEntry.COLUMN_STEP + " ASC";
+
+        Cursor cursor = dbRead.query(
+                ImageEntry.TABLE_NAME,                  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        return cursor;
+    }
+
+    public static class TutorialStepFragment extends Fragment {
+        public int mNum, stepNumber, imageId, textId;
+        int imageIdColumnIndex, textIdColumnIndex;
+        String stepText;
+        ImageView imageView;
+        TextView textViewInstructions, textViewCurrentStep;
+        private Cursor mCursor;
+
+        public static TutorialStepFragment newInstance(int num, Cursor cursor) {
+            TutorialStepFragment f = new TutorialStepFragment();
+            f.setCursor(cursor);
+
+            Bundle args = new Bundle();
+            args.putInt("num", num);
+            f.setArguments(args);
+            return f;
+        }
+
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mNum = getArguments() != null ? mNum = getArguments().getInt("num") : 1;
+
+
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            mCursor.moveToPosition(mNum);
+            stepNumber = mNum + 1;
+            imageIdColumnIndex = mCursor.getColumnIndex(ImageEntry.COLUMN_IMAGE_ID);
+            textIdColumnIndex = mCursor.getColumnIndex(ImageEntry.COLUMN_TEXT_ID);
+            imageId = mCursor.getInt(imageIdColumnIndex);
+            textId = mCursor.getInt(textIdColumnIndex);
+            stepText = "STEP " + stepNumber;
+            View v = inflater.inflate(R.layout.fragment_tutorial_step, container, false);
+
+
+            imageView = v.findViewById(R.id.fragment_tutorial_step_imageView);
+            imageView.setImageResource(imageId);
+
+            textViewCurrentStep = v.findViewById(R.id.fragment_tutorial_step_textView_currentStep);
+            textViewCurrentStep.setText(stepText);
+
+
+            textViewInstructions = v.findViewById(R.id.fragment_tutorial_step_textView_instruction);
+            textViewInstructions.setText(textId);
+
+
+            return v;
+        }
+
+//        @Override
+//        public void onDestroyView() {
+//            super.onDestroyView();
+//            Drawable drawable = tutorialImage.getDrawable();
+//            if (drawable != null && drawable instanceof BitmapDrawable) {
+//                ((BitmapDrawable) drawable).getBitmap().recycle();
+//            }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+        }
+
+        private void setCursor(Cursor cursor) {
+            mCursor = cursor;
+        }
+
+
     }
 
     /**
      * View pager adapter
      */
-    public class MyViewPagerAdapter extends PagerAdapter {
-        private LayoutInflater layoutInflater;
+    public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 
-        public MyViewPagerAdapter() {
+        public MyViewPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View view = layoutInflater.inflate(layouts[position], container, false);
-            container.addView(view);
-
-            return view;
+        public Fragment getItem(int position) {
+            return TutorialStepFragment.newInstance(position, cursor);
         }
+
+//        @Override
+//        public Object instantiateItem(ViewGroup container, int position) {
+//            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//            View view = layoutInflater.inflate(layouts[position], container, false);
+//            container.addView(view);
+//
+//            return view;
+//        }
 
         @Override
         public int getCount() {
-            return layouts.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object obj) {
-            return view == obj;
-        }
-
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
+            return numOfSteps;
         }
     }
 
