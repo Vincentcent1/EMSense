@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.emsense3.Fragments.HomeFragment;
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     public static boolean sdrFail = false;
     public static boolean terminateFlag;
     public static Bundle bundle = new Bundle();
+    private static boolean authorised = true;
     ServerSocket serverSocket;
     private Cursor cursor;
     private ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
@@ -194,101 +194,84 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void detect(View view) {
+    public void detect(final View view) {
         final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         final Context context = view.getContext();
-        final EditText input = new EditText(this);
 
 
         view.startAnimation(animScale);
 
-        AlertDialog.Builder helpBuilder1 = new AlertDialog.Builder(this);
         final AlertDialog.Builder helpBuilder2 = new AlertDialog.Builder(this);
 
 
+        final String serialNumber = getDeviceId(view);
+
+        if (serialNumber.equals("deleteAll")) {
+            SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+            dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
+            return;
+        } else if (!serialNumber.equals("1A") &&
+                !serialNumber.equals("1B") &&
+                !serialNumber.equals("1C") &&
+                !serialNumber.equals("1D") &&
+                !serialNumber.equals("2A") &&
+                !serialNumber.equals("2B")) {
+            return;
+        }
 
 
+        cursor = createCursor(serialNumber);
 
-        input.setSingleLine();
-        input.setText("");
+        cursor.moveToFirst();
 
-        helpBuilder1.setTitle("ITEMS");
-        helpBuilder1.setMessage("Enter serial number:");
-        helpBuilder1.setView(input);
-        helpBuilder1.setPositiveButton("Ok",
-                new DialogInterface.OnClickListener() {
+        //Change "something" to intent
+
+        String objectName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS));
+        String modelName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL));
+
+        String title = objectName + " detected";
+        String msg1 = "Model: " + modelName;
+        String msg2 = "Save this object?";
+
+        helpBuilder2.setTitle(title)
+                .setMessage(msg1 + "\n" + "\n" + msg2)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        final String serialNumber = input.getText().toString();
+                        //Save the object
 
-                        if (serialNumber.equals("deleteAll")) {
-                            SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
-                            dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
-                            return;
-                        } else if (!serialNumber.equals("1A") &&
-                                !serialNumber.equals("1B") &&
-                                !serialNumber.equals("1C") &&
-                                !serialNumber.equals("1D") &&
-                                !serialNumber.equals("2A") &&
-                                !serialNumber.equals("2B")) {
-                            return;
-                        }
-
-
-                        cursor = createCursor(serialNumber);
-
-                        cursor.moveToFirst();
-
-                        //Change "something" to intent
-
-                        String objectName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS));
-                        String modelName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL));
-
-                        String title = objectName + " detected";
-                        String msg1 = "Model: " + modelName;
-                        String msg2 = "Save this object?";
-
-                        helpBuilder2.setTitle(title)
-                                .setMessage(msg1 + "\n" + "\n" + msg2)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //Save the object
-
-                                        updateLibrary(serialNumber);
-                                        Toast.makeText(context, "Items added", Toast.LENGTH_LONG).show();
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //Dont save the object -> cancel the dialog
-                                        dialogInterface.dismiss();
-                                        cursor.close();
-                                    }
-                                });
-
-                        final AlertDialog dialog = helpBuilder2.create();
-
-                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                            @Override
-                            public void onShow(DialogInterface arg0) {
-                                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
-                            }
-                        });
-
-
-                        dialog.show();
-
+                        updateLibrary(serialNumber);
+                        Toast.makeText(context, "Items added", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Dont save the object -> cancel the dialog
+                        dialogInterface.dismiss();
+                        cursor.close();
                     }
                 });
 
-        AlertDialog helpDialog = helpBuilder1.create();
-        helpDialog.show();
+        final AlertDialog dialog = helpBuilder2.create();
 
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+            }
+        });
+
+        //Remove loading screen and please wait text
+        dialog.show();
 
     }
+
+
+
+
+
 
     public void updateLibrary(String serialNumber) {
 //        Hardcoded way to prevent error (for now)
@@ -381,6 +364,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String getDeviceId(View view) {
+        AlertDialog.Builder helpBuilder3 = new AlertDialog.Builder(this);
+
+        helpBuilder3.setTitle("ITEMS");
+        helpBuilder3.setMessage("Press OK to calibrate");
+
+        helpBuilder3.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        authorised = true;
+                    }
+                }
+        );
+
+
+
+
         final Context context = view.getContext();
 
         String command;
@@ -392,27 +392,46 @@ public class MainActivity extends AppCompatActivity
         command = bundle.getString("incomingMessage");
         if (command == "calibrate") {
             //Insert dialog to tell user to calibrate
+            AlertDialog calibrateDialog = helpBuilder3.create();
+            calibrateDialog.show();
+
         } else {
             bundle.putString("outgoingMessage", "pause");
         }
         //User presses detect button (1st detection)
-        useSDR(view);
+        if (authorised) {
+            useSDR(view);
+        }
+        authorised = false;
         if (sdrFail) {
             return null;
         }
+
+        helpBuilder3.setMessage("Touch the object with the scanner and press OK");
         bundle.putString("outgoingMessage", "calibrationDone");
         //Server prompts user to scan object
         command = bundle.getString("incomingMessage");
         if (command == "scan") {
             //Insert dialog to tell user to scan object
+            AlertDialog scanDialog = helpBuilder3.create();
+            scanDialog.show();
+
         } else {
             bundle.putString("outgoingMessage", "pause");
         }
+
+
         //User presses detect button (2nd detection)
-        useSDR(view);
+        if (authorised) {
+            //Show loading bar
+            useSDR(view);
+        }
         if (sdrFail) {
             return null;
         }
+        //Remove loading bar
+        //Show text = "Processing data, you may remove the scanner . . ."
+        //Show
         bundle.putString("outgoingMessage", "scanDone");
         //Server send device ID after data processing is finished
         String deviceIdString = bundle.getString("incomingMessage");
