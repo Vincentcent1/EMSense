@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "38508176951",
+    "firebase_url": "https://emsense3.firebaseio.com",
+    "project_id": "emsense3",
+    "storage_bucket": "emsense3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38508176951:android:543ad91187a66ce0",
+        "android_client_info": {
+          "package_name": "com.example.android.emsense3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "38508176951-16p7covm9d9ohsoj3ua13jnu0sppbtej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.emsense3",
+            "certificate_hash": "4287623d6d9ac6c5d5e57006984b58c549288a57"
+          }
+        },
+        {
+          "client_id": "38508176951-5bneonibessg7rp25qsrd15c8l1t99t2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGeAh0_tRRxBL7uIdbX_9nBIS0rdJyGJs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "38508176951-5bneonibessg7rp25qsrd15c8l1t99t2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

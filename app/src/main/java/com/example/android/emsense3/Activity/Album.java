@@ -4,17 +4,19 @@ package com.example.android.emsense3.Activity;
  * Created by slzh645 on 7/11/2017.
  */
 
+//Custom class to create the cards layout shown in the library and objects page
+
 public class Album {
     private String name;
-    private int numOfSongs;
+    private int numOfItems;
     private int thumbnail;
 
     public Album() {
     }
 
-    public Album(String name, int numOfSongs, int thumbnail) {
+    public Album(String name, int numOfItems, int thumbnail) {
         this.name = name;
-        this.numOfSongs = numOfSongs;
+        this.numOfItems = numOfItems;
         this.thumbnail = thumbnail;
     }
 
@@ -26,12 +28,12 @@ public class Album {
         this.name = name;
     }
 
-    public int getNumOfSongs() {
-        return numOfSongs;
+    public int getNumofItems() {
+        return numOfItems;
     }
 
-    public void setNumOfSongs(int numOfSongs) {
-        this.numOfSongs = numOfSongs;
+    public void setNumOfItems(int numOfItems) {
+        this.numOfItems = numOfItems;
     }
 
     public int getThumbnail() {

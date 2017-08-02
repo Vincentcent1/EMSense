@@ -6,6 +6,8 @@ import android.provider.BaseColumns;
  * Created by setia on 7/17/2017.
  */
 
+//Contract Class to store all the name of each table column
+
 public final class ItemsContract {
     private ItemsContract() {
     }

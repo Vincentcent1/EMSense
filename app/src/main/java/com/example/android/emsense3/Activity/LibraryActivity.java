@@ -4,6 +4,11 @@ package com.example.android.emsense3.Activity;
  * Created by slzh645 on 7/11/2017.
  */
 
+//Activity controlling the Library page
+//1. Query the database for the content of the user's database
+//2. Create the cards using Album and AlbumAdapterLibrary class
+//3. Display the cards in the library page
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -47,6 +52,8 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
     private RecyclerView recyclerView;
     private AlbumAdapterLibrary adapter;
     private List<Album> albumList;
+    private String objectName;
+    private Cursor cursor1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,28 +64,20 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
 
         initCollapsingToolbar();
 
-        //Database Stuff
-
-        // Gets the data repository in write mode
-//        SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
-
-
-
-
-
+        //Get a list of all items in the user database to be displayed in the library
+        // Gets the data repository in read mode
         SQLiteDatabase dbRead = mDbHelper.getReadableDatabase();
 
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String[] projection = {
-//                LibraryEntry._ID,
                 LibraryEntry.COLUMN_ITEMS,
         };
 
         // Filter results WHERE "title" = 'My Title'
-        String selection = LibraryEntry.COLUMN_ITEMS;
-//        String[] selectionArgs = { "" };
+        //String selection = LibraryEntry.COLUMN_ITEMS;
+        //String[] selectionArgs = { "" };
 
         // How you want the results sorted in the resulting Cursor
         String sortOrder =
@@ -114,7 +113,7 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
             e.printStackTrace();
         }
 
-
+        cursor.close();
     }
 
     @Override
@@ -186,7 +185,7 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
     }
 
     /**
-     * Adding few albums for testing
+     * creating the card view
      */
     private void prepareAlbums(Cursor cursor) {
         int nameColumnIndex = cursor.getColumnIndex(LibraryEntry.COLUMN_ITEMS);
@@ -197,7 +196,8 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
         covers.put("3D Printer", R.drawable.library_image_3dprinter);
         covers.put("Drill", R.drawable.library_image_drill);
         covers.put("Laser Cutter", R.drawable.library_image_laser);
-
+        covers.put("Laptop", R.drawable.library_image_laptop);
+        covers.put("Mobile Phone", R.drawable.library_image_phone);
 
 
         cursor.moveToNext();
@@ -256,6 +256,7 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
     /**
      * RecyclerView item decoration - give equal margin around grid item
      */
+
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
         private int spanCount;
@@ -290,6 +291,5 @@ public class LibraryActivity extends AppCompatActivity implements SearchView.OnQ
             }
         }
     }
-
 
 }

@@ -1,5 +1,10 @@
 package com.example.android.emsense3.Activity;
 
+//Received intent containing EXTRA_MESSAGE from the specific object activity which specify the serialnumber of the item.
+//Query the IMAGE database for the rows containing the serialnumber
+//Create the ViewPager Fragment to show the tutorial in a slide left-and-right layout, dynamically generating the image and text.
+
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -116,6 +121,7 @@ public class TutorialStepActivity extends AppCompatActivity {
         });
     }
 
+    //Initialising the dots on the bottom of the screen based on number of slides
     private void addBottomDots(int currentPage) {
         dots = new TextView[numOfSteps];
         int colorsActive = getResources().getColor(R.color.White);
@@ -140,10 +146,6 @@ public class TutorialStepActivity extends AppCompatActivity {
         return viewPager.getCurrentItem() + i;
     }
 
-//    private void launchSpecificObjectActivity() {
-//        startActivity(new Intent(TutorialStepActivity.this, SpecificObjectActivity.class));
-//        finish();
-//    }
 
     private Cursor createCursor() {
         ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
@@ -240,13 +242,6 @@ public class TutorialStepActivity extends AppCompatActivity {
             return v;
         }
 
-//        @Override
-//        public void onDestroyView() {
-//            super.onDestroyView();
-//            Drawable drawable = tutorialImage.getDrawable();
-//            if (drawable != null && drawable instanceof BitmapDrawable) {
-//                ((BitmapDrawable) drawable).getBitmap().recycle();
-//            }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
@@ -274,15 +269,6 @@ public class TutorialStepActivity extends AppCompatActivity {
             return TutorialStepFragment.newInstance(position, cursor);
         }
 
-//        @Override
-//        public Object instantiateItem(ViewGroup container, int position) {
-//            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//            View view = layoutInflater.inflate(layouts[position], container, false);
-//            container.addView(view);
-//
-//            return view;
-//        }
 
         @Override
         public int getCount() {

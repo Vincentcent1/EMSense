@@ -32,8 +32,7 @@
             android:name=".Activity.ObjectsActivity"
             android:label="@string/title_activity_objects"
             android:parentActivityName=".Activity.LibraryActivity"
-            android:theme="@style/AppTheme.NoActionBar.Detail">
-
+            android:theme="@style/AppTheme.NoActionBar.Main">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.emsense3.Activity.LibraryActivity" />
@@ -43,19 +42,16 @@
             android:label="SpecificObjects"
             android:parentActivityName=".Activity.ObjectsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".Activity.TutorialStepActivity"
             android:label="TutorialStep"
             android:parentActivityName=".Activity.SpecificObjectActivity"
             android:theme="@style/AppTheme.NoActionBar.Tutorial" />
-
         <activity
             android:name=".Activity.YouTubeActivity"
             android:label="TutorialStep"
             android:parentActivityName=".Activity.SpecificObjectActivity"
             android:theme="@style/AppTheme.NoActionBar.Tutorial" />
-
 
     </application>
 

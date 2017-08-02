@@ -42,7 +42,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
-        app:srcCompat="@drawable/banner_lasercutter_thunderlasersystem_small" />
+        app:srcCompat="@drawable/banner_lasercutter_thunderlasersystem" />
 
     <View
         android:layout_width="0dp"
@@ -64,6 +64,7 @@
         android:layout_marginTop="173dp"
         android:background="@drawable/roundbutton"
         android:elevation="6dp"
+        android:tint="@color/White"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/button_step"
         app:layout_constraintTop_toTopOf="@+id/specific_object_banner"
@@ -79,6 +80,7 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/roundbutton"
         android:elevation="6dp"
+        android:tint="@color/White"
         app:layout_constraintLeft_toRightOf="@+id/button_info"
         app:layout_constraintRight_toLeftOf="@+id/button_video"
         app:layout_constraintTop_toTopOf="@+id/button_info"
@@ -94,6 +96,7 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/roundbutton"
         android:elevation="6dp"
+        android:tint="@color/White"
 
         app:layout_constraintLeft_toRightOf="@+id/button_step"
         app:layout_constraintRight_toRightOf="parent"

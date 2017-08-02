@@ -1,5 +1,8 @@
 package com.example.android.emsense3.Activity;
 
+//The Youtube Activity receive intent from the specific object Activity containing the youtube id of the specific video respective to the object
+//Show the video based on the youtube ID
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;

@@ -4,6 +4,8 @@ package com.example.android.emsense3.Activity;
  * Created by slzh645 on 7/11/2017.
  */
 
+//Adapter for the cards in the Library
+
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -48,7 +50,7 @@ public class AlbumAdapterLibrary extends RecyclerView.Adapter<AlbumAdapterLibrar
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Album album = albumList.get(position);
         holder.title.setText(album.getName());
-        holder.count.setText(album.getNumOfSongs() + " items");
+        holder.count.setText(album.getNumofItems() + " items");
 
         // loading album cover using Glide library
         Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);

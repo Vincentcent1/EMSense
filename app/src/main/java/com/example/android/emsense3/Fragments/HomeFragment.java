@@ -1,9 +1,13 @@
 package com.example.android.emsense3.Fragments;
 
-import android.app.Fragment;
+//Standard Empty Fragment which follows the layout set.
+//Most of the functionalities are controlled from main activity
+
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -116,8 +120,5 @@ public class HomeFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-//    public void buttonEnlarge(){
-//        ImageButton newButton = findViewById(R.id.imageButtonDetect);
-//        newButton.width
-//    }
+
 }

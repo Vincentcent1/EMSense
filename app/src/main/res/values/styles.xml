@@ -18,6 +18,7 @@
     <style name="AppTheme.NoActionBar.Main">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorAccent">@color/LightBlue</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowExitTransition">@transition/explode</item>
         <item name="android:windowReenterTransition">@transition/fade</item>

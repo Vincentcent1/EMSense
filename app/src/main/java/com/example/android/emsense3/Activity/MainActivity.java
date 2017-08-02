@@ -2,24 +2,23 @@
 
 package com.example.android.emsense3.Activity;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,9 +27,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.example.android.emsense3.Fragments.HomeFragment;
+import com.example.android.emsense3.Fragments.MyAlertDialogFragment;
 import com.example.android.emsense3.Fragments.ProfileFragment;
 import com.example.android.emsense3.Fragments.SettingsFragment;
 import com.example.android.emsense3.R;
@@ -47,21 +46,31 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.example.android.emsense3.data.ItemsDbHelper.serialNumberStringArray;
 
-//https://stackoverflow.com/questions/38011736/android-circle-profile-picture
-//https://stackoverflow.com/questions/22105775/imageview-in-circular-through-xml
+//1. Parent activity for Settings, Profile and Home Fragment
+//2. Initialise navigation drawer for easy transition between Fragments.
+//3. Initialise MyAlertDialogFragment so that dialog box will appear when detect button is clicked.
+//4. Enter Serial Number into the dialog box to add items into the library.
+//5. 1A to 1D are 3D Printers, 2A and 2B are Laser Cutters, 3A to 3I are Laptops, 4A to 4H are Phones
+//6. Ideally, the createCursor and updateLibrary function will take in serialNumber from the Computer which has processed
+// the data sent from the RTL-SDR driver.
+
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MyAlertDialogFragment.MyAlertDialogListener {
 
     public static final int portNum = 55555;
     private static final String TAG = "MyActivity";
-    public static boolean sdrFail = false;
-    public static boolean terminateFlag;
+    public static boolean sdrFail = false,
+            terminateFlag,
+            authorised = false,
+            testMode = true;
     public static Bundle bundle = new Bundle();
-    private static boolean authorised = true;
+    public String serialNumber, objectName, modelName;
     ServerSocket serverSocket;
     private Cursor cursor;
     private ItemsDbHelper mDbHelper = new ItemsDbHelper(this);
@@ -106,7 +115,7 @@ public class MainActivity extends AppCompatActivity
             firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container1, firstFragment, firstFragment.getTag()).commit();
             Log.v(TAG, "I'm at 71");
         }
@@ -154,7 +163,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         // Create new fragment and transaction
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         int id = item.getItemId();
 
@@ -194,87 +203,38 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void detect(final View view) {
+
+    public void detect(View view) {
         final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         final Context context = view.getContext();
-
-
         view.startAnimation(animScale);
-
-        final AlertDialog.Builder helpBuilder2 = new AlertDialog.Builder(this);
-
-
-        final String serialNumber = getDeviceId(view);
-
-        if (serialNumber.equals("deleteAll")) {
-            SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
-            dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
-            return;
-        } else if (!serialNumber.equals("1A") &&
-                !serialNumber.equals("1B") &&
-                !serialNumber.equals("1C") &&
-                !serialNumber.equals("1D") &&
-                !serialNumber.equals("2A") &&
-                !serialNumber.equals("2B")) {
-            return;
+//        serialNumber = "01010101";
+        if (testMode) {
+            showAlertDialog("1A");
+        } else {
+            showAlertDialog("1B");
         }
 
 
-        cursor = createCursor(serialNumber);
+//
+//        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//            @Override
+//            public void onShow(DialogInterface arg0) {
+//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
+//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+//            }
+//        });
+//
+//        //Remove loading screen and please wait text
+//        if(authorised){
+//            dialog.show();
+//        }
 
-        cursor.moveToFirst();
-
-        //Change "something" to intent
-
-        String objectName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS));
-        String modelName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL));
-
-        String title = objectName + " detected";
-        String msg1 = "Model: " + modelName;
-        String msg2 = "Save this object?";
-
-        helpBuilder2.setTitle(title)
-                .setMessage(msg1 + "\n" + "\n" + msg2)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //Save the object
-
-                        updateLibrary(serialNumber);
-                        Toast.makeText(context, "Items added", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //Dont save the object -> cancel the dialog
-                        dialogInterface.dismiss();
-                        cursor.close();
-                    }
-                });
-
-        final AlertDialog dialog = helpBuilder2.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
-            }
-        });
-
-        //Remove loading screen and please wait text
-        dialog.show();
 
     }
 
 
-
-
-
-
-    public void updateLibrary(String serialNumber) {
-//        Hardcoded way to prevent error (for now)
+    public void updateLibrary() {
 
         cursor.moveToFirst();
 
@@ -343,9 +303,8 @@ public class MainActivity extends AppCompatActivity
         return cursor;
     }
 
-    public void useSDR(View view) {
+    public void useSDR(Context context) {
         sdrFail = false;
-        final Context context = view.getContext();
         String ipAddress = getIpAddress(context);
         final int port = 14423;
         final int samplerate = 1024000;
@@ -363,25 +322,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public String getDeviceId(View view) {
-        AlertDialog.Builder helpBuilder3 = new AlertDialog.Builder(this);
-
-        helpBuilder3.setTitle("ITEMS");
-        helpBuilder3.setMessage("Press OK to calibrate");
-
-        helpBuilder3.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        authorised = true;
-                    }
-                }
-        );
+    public String getDeviceId(Context context) {
 
 
-
-
-        final Context context = view.getContext();
+//        final Context context = view.getContext();
 
         String command;
         ServerThread serverThread = new ServerThread();
@@ -392,29 +336,26 @@ public class MainActivity extends AppCompatActivity
         command = bundle.getString("incomingMessage");
         if (command == "calibrate") {
             //Insert dialog to tell user to calibrate
-            AlertDialog calibrateDialog = helpBuilder3.create();
-            calibrateDialog.show();
+
 
         } else {
             bundle.putString("outgoingMessage", "pause");
         }
         //User presses detect button (1st detection)
         if (authorised) {
-            useSDR(view);
+            useSDR(context);
         }
         authorised = false;
         if (sdrFail) {
             return null;
         }
 
-        helpBuilder3.setMessage("Touch the object with the scanner and press OK");
         bundle.putString("outgoingMessage", "calibrationDone");
         //Server prompts user to scan object
         command = bundle.getString("incomingMessage");
         if (command == "scan") {
             //Insert dialog to tell user to scan object
-            AlertDialog scanDialog = helpBuilder3.create();
-            scanDialog.show();
+
 
         } else {
             bundle.putString("outgoingMessage", "pause");
@@ -424,7 +365,7 @@ public class MainActivity extends AppCompatActivity
         //User presses detect button (2nd detection)
         if (authorised) {
             //Show loading bar
-            useSDR(view);
+            useSDR(context);
         }
         if (sdrFail) {
             return null;
@@ -440,7 +381,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String getIpAddress(Context context) {
-        WifiManager wifi = (WifiManager) context.getSystemService(WIFI_SERVICE);
+        WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
         int ipAddress = wifi.getConnectionInfo().getIpAddress();
 
         // Convert little-endian to big-endianif needed
@@ -459,6 +400,115 @@ public class MainActivity extends AppCompatActivity
         }
 
         return ipAddressString;
+    }
+
+    public void showAlertDialog(String dialogType) {
+        //Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new MyAlertDialogFragment();
+        bundle.putString("dialogType", dialogType);
+
+//        dialog.setArguments(bundle);
+
+        switch (dialogType) {
+
+            case "1A":
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "MyAlertDialogFragment");
+                break;
+
+            case "1B":
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "MyAlertDialogFragment");
+                break;
+
+            case "2A":
+                serialNumber = bundle.getString("serialNumber");
+                if (serialNumber.equals("deleteAll")) {
+                    SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+                    dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
+                    return;
+
+                } else if (!Arrays.asList(serialNumberStringArray).contains(serialNumber)) {
+                    return;
+                }
+                cursor = createCursor(serialNumber);
+                cursor.moveToNext();
+                objectName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS));
+                modelName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL));
+                bundle.putString("objectName", objectName);
+                bundle.putString("modelName", modelName);
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "MyAlertDialogFragment");
+                break;
+
+            case "2B":
+                if (serialNumber.equals("deleteAll")) {
+                    SQLiteDatabase dbWrite = mDbHelper.getWritableDatabase();
+                    dbWrite.delete(LibraryEntry.TABLE_NAME, null, null);
+
+                } else if (!Arrays.asList(serialNumberStringArray).contains(serialNumber)) {
+                    return;
+                }
+//                FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                DatabaseReference myRef = database.getReference("Detected Object");
+////                myRef.setValue("Hello, World");
+//                myRef.get
+
+                serialNumber = getDeviceId(this);
+                cursor = createCursor(serialNumber);
+                objectName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_ITEMS));
+                modelName = cursor.getString(cursor.getColumnIndex(LibraryDatabaseEntry.COLUMN_MODEL));
+                bundle.putString("objectName", objectName);
+                bundle.putString("modelName", modelName);
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "MyAlertDialogFragment");
+                break;
+
+            default:
+                break;
+
+
+        }
+
+
+    }
+
+    //The dialog fragment receives reference to this fragment/activity through the
+    //Fragment.onAttach callback, which it uses to call the following methods
+    //defined by the MyAlertDialogFragment.MyAlertDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialogFragment) {
+        String dialogType = dialogFragment.getArguments().getString("dialogType");
+
+        switch (dialogType) {
+            case "1A":
+                Log.v(TAG, "i'M HERE");
+                dialogFragment.dismiss();
+                showAlertDialog("2A");
+                break;
+
+            case "1B":
+                authorised = true;
+                break;
+
+            case "2A":
+                updateLibrary();
+                break;
+            case "2B":
+                updateLibrary();
+                break;
+
+            default:
+                dialogFragment.dismiss();
+                break;
+
+        }
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialogFragment) {
+        dialogFragment.dismiss();
     }
 
     public class ServerThread extends Thread {

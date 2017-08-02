@@ -22,6 +22,7 @@ import com.example.android.emsense3.R;
 
 import java.util.ArrayList;
 import java.util.List;
+//Adapter for the cards in the Objects Screen
 
 
 public class AlbumAdapterObjects extends RecyclerView.Adapter<AlbumAdapterObjects.MyViewHolder> {
@@ -48,7 +49,7 @@ public class AlbumAdapterObjects extends RecyclerView.Adapter<AlbumAdapterObject
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Album album = albumList.get(position);
         holder.title.setText(album.getName());
-        holder.count.setText(album.getNumOfSongs() + " items");
+        holder.count.setText(album.getNumofItems() + " items");
 
         // loading album cover using Glide library
         Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);

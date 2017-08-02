@@ -4,6 +4,11 @@ package com.example.android.emsense3.Activity;
  * Created by slzh645 on 7/11/2017.
  */
 
+//Activity controlling the Library page
+//1. Query the database for the content of the user's database
+//2. Create the cards using Album and AlbumAdapterLibrary class
+//3. Display the cards in the library page based on the items in the category e.g Laptop category
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -52,7 +57,7 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_objects);
+        setContentView(R.layout.activity_objects);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         bannerImage = (ImageView) findViewById(R.id.objects_banner);
@@ -85,7 +90,6 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         Intent intent = getIntent();
         String object = intent.getStringExtra(EXTRA_MESSAGE);
         setBannerImage(object);
-
 
 
 
@@ -287,7 +291,6 @@ public class ObjectsActivity extends AppCompatActivity implements SearchView.OnQ
         banner.put("Laser Cutter", R.drawable.banner_lasercutter);
         banner.put("Laptop", R.drawable.banner_laptop);
         banner.put("Printer", R.drawable.banner_printer);
-
         bannerImage.setImageResource((int) banner.get(objectName));
     }
 

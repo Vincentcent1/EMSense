@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_categories">
+        <item>3D Printers</item>
+        <item>Laptops</item>
+        <item>Laser Cutters</item>
+        <item>Mobile Phones</item>
+    </string-array>
+
+
+</resources>

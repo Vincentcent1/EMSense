@@ -1,5 +1,11 @@
 package com.example.android.emsense3.Activity;
 
+//Receive an intent with EXTRA_MESSAGE containing the object name clicked in the ObjectsActivity
+//Query the database for the rows with the object name
+//Create the layout dynamically based on the object clicked, with its specific image and description
+
+
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,8 +41,7 @@ public class SpecificObjectActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_specific_object);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Thunder Laser Systems Mini");
-        setSupportActionBar(toolbar);
+
 
         bannerImageView = (ImageView) findViewById(R.id.specific_object_banner);
 
@@ -49,6 +54,9 @@ public class SpecificObjectActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         objectName = intent.getStringExtra(EXTRA_MESSAGE);
+
+        toolbar.setTitle(objectName);
+        setSupportActionBar(toolbar);
 
         Cursor cursor = createCursor();
 
